@@ -4,6 +4,7 @@ import {
   ArrowRight,
   Award,
   BookOpen,
+  Brain,
   Building2,
   CalendarCheck,
   CheckCircle2,
@@ -22,6 +23,7 @@ import {
   Sparkles,
   Star,
   Target,
+  Trophy,
   UserCheck,
   Users,
   Video,
@@ -35,6 +37,8 @@ const schools = [
     name: "X-ENS Ulm",
     mark: "X-ENS",
     category: "Ingenieur & ENS",
+    description: "Association des deux references les plus exigeantes du parcours scientifique francais : excellence mathematique, culture scientifique profonde et preparation aux concours les plus selectifs.",
+    strengths: ["Mathematiques avancees", "Physique", "Rigueur de concours"],
     logos: [
       "https://commons.wikimedia.org/wiki/Special:Redirect/file/%C3%89cole_polytechnique_signature.svg",
       "https://commons.wikimedia.org/wiki/Special:Redirect/file/Logo_%C3%89cole_normale_sup%C3%A9rieure_-_PSL_(ENS-PSL).svg"
@@ -44,30 +48,40 @@ const schools = [
     name: "Mines Paris",
     mark: "MINES",
     category: "Ingenieur",
+    description: "Grande ecole d'ingenieurs reconnue pour son exigence scientifique, son ouverture aux enjeux industriels et sa capacite a former des profils analytiques tres complets.",
+    strengths: ["Sciences appliquees", "Methodes de travail", "Problemes ouverts"],
     logos: ["https://commons.wikimedia.org/wiki/Special:Redirect/file/Logo_Mines_Paris_-_PSL.png"]
   },
   {
     name: "CentraleSupelec",
     mark: "CS",
     category: "Ingenieur",
+    description: "Ecole d'ingenieurs de reference pour les mathematiques, la physique, l'informatique et les sciences de l'entreprise, avec une forte culture concours.",
+    strengths: ["Physique", "Informatique", "Preparation prepa"],
     logos: ["https://commons.wikimedia.org/wiki/Special:Redirect/file/Ecole_Centrale_Supelec_logo.svg"]
   },
   {
     name: "HEC Paris",
     mark: "HEC",
     category: "Commerce",
+    description: "Institution phare du management en France, reconnue pour l'exigence de ses admissions, ses parcours en finance, strategie et entrepreneuriat.",
+    strengths: ["Entretiens", "Economie", "Finance"],
     logos: ["https://commons.wikimedia.org/wiki/Special:Redirect/file/HEC_Paris.svg"]
   },
   {
     name: "ESSEC",
     mark: "ESSEC",
     category: "Commerce",
+    description: "Grande ecole de commerce reputee pour ses parcours flexibles, son excellence en finance, marketing, conseil et preparation des oraux.",
+    strengths: ["Finance", "Anglais", "Oral de motivation"],
     logos: ["https://commons.wikimedia.org/wiki/Special:Redirect/file/ESSEC_Logo.svg"]
   },
   {
     name: "ESCP",
     mark: "ESCP",
     category: "Commerce",
+    description: "Ecole de commerce historique et internationale, adaptee aux profils qui cherchent une preparation solide en economie, entretiens et parcours europeens.",
+    strengths: ["Economie", "Entretiens", "Culture generale"],
     logos: ["https://commons.wikimedia.org/wiki/Special:Redirect/file/ESCP_LOGO_CMJN.png"]
   }
 ];
@@ -93,6 +107,11 @@ const teachers = [
     reviews: 48,
     image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=900&q=85",
     description: "Ex-khube MPSI/MP, specialisee dans les exercices difficiles et les raisonnements de concours.",
+    bio: "Camille travaille avec des eleves qui visent un saut de niveau rapide : reprise des definitions, choix des bonnes idees, puis entrainement en temps limite.",
+    track: "MP* - admissible X/ENS, tutrice en mathematiques",
+    results: "+3,1 points de moyenne observes sur les suivis longs",
+    style: "Tableau blanc, questions guidees, correction exigeante",
+    level: "Terminale scientifique, MPSI, MP, PC",
     slots: ["Mardi 18:00", "Mercredi 19:30", "Samedi 10:00"]
   },
   {
@@ -104,6 +123,11 @@ const teachers = [
     reviews: 36,
     image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=900&q=85",
     description: "Preparation structuree aux oraux, dossiers, dissertations et entretiens de motivation.",
+    bio: "Adrien aide les candidats a clarifier leur trajectoire, construire des arguments solides et travailler une expression orale precise.",
+    track: "HEC Paris - prepa ECG, jury blanc associatif",
+    results: "24 candidats accompagnes sur oraux et entretiens",
+    style: "Simulation, feedback direct, plan de progression",
+    level: "Prepa ECG, admissions paralleles, licence",
     slots: ["Lundi 20:00", "Jeudi 18:30", "Dimanche 11:00"]
   },
   {
@@ -115,6 +139,11 @@ const teachers = [
     reviews: 41,
     image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=85",
     description: "Cours courts et intensifs pour debloquer les notions, reprendre confiance et travailler vite.",
+    bio: "Lea structure les seances autour de diagnostics rapides : identifier l'erreur, reconstruire la methode, puis automatiser avec des exercices proches du controle.",
+    track: "Mines Paris - ancienne PCSI/PSI",
+    results: "Specialiste des remises a niveau avant DS",
+    style: "Fiches methodes, exercices gradues, suivi entre cours",
+    level: "Seconde a prepa scientifique",
     slots: ["Mercredi 17:00", "Vendredi 18:00", "Samedi 14:30"]
   },
   {
@@ -126,6 +155,11 @@ const teachers = [
     reviews: 29,
     image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=900&q=85",
     description: "Suivi exigeant pour finance d'entreprise, anglais oral et preparation aux candidatures.",
+    bio: "Nicolas combine rigueur technique et aisance orale : cas pratiques, vocabulaire professionnel, entrainement aux questions de recruteurs.",
+    track: "ESSEC - parcours finance, experience en M&A",
+    results: "Preparation aux stages, entretiens et partiels de finance",
+    style: "Cas concrets, anglais professionnel, feedback oral",
+    level: "Licence, master, ecoles de commerce",
     slots: ["Mardi 20:00", "Jeudi 19:00", "Samedi 16:00"]
   },
   {
@@ -137,6 +171,11 @@ const teachers = [
     reviews: 33,
     image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=900&q=85",
     description: "Coaching clair pour les oraux, la posture, la synthese et les questions de culture economique.",
+    bio: "Ines travaille la clarte du discours et la posture : construire une reponse courte, l'illustrer, puis tenir face aux relances.",
+    track: "ESCP - double parcours economie et strategie",
+    results: "Suivi de candidats BCE, AST et oraux blancs",
+    style: "Oral blanc, grille d'evaluation, replay des reponses",
+    level: "Prepa commerce, AST, bachelor",
     slots: ["Lundi 18:30", "Mercredi 20:00", "Dimanche 15:00"]
   },
   {
@@ -148,6 +187,11 @@ const teachers = [
     reviews: 27,
     image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=900&q=85",
     description: "Approche tres methodique pour transformer un cours dense en automatismes de resolution.",
+    bio: "Mathis rend la physique plus lisible : schema, lois utiles, ordre de grandeur, puis resolution propre en conditions concours.",
+    track: "CentraleSupelec - filiere PSI",
+    results: "Accompagnement regulier en physique et SI",
+    style: "Schema de resolution, exercices chronometres, kholles duo",
+    level: "Premiere, terminale, PCSI, PSI",
     slots: ["Mardi 17:30", "Vendredi 19:00", "Samedi 11:30"]
   }
 ];
@@ -263,13 +307,13 @@ function Header() {
 
 function SchoolMark({ school, compact = false }) {
   return (
-    <div className={`flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white shadow-sm ${compact ? "h-14 w-full px-3" : "h-20 w-full px-4"}`}>
+    <div className={`flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white/95 shadow-sm ${compact ? "h-14 w-full px-3" : "h-24 w-full px-4"}`}>
       {school.logos?.map((logo) => (
         <img
           key={logo}
           src={logo}
           alt={`Logo ${school.name}`}
-          className={`${compact ? "max-h-8 max-w-[4.8rem]" : "max-h-12 max-w-[8rem]"} object-contain`}
+          className={`${compact ? "max-h-8 max-w-[4.8rem]" : "max-h-14 max-w-[9rem]"} object-contain`}
           loading="lazy"
         />
       ))}
@@ -281,8 +325,8 @@ function SchoolMark({ school, compact = false }) {
 function HeroVisual() {
   return (
     <div className="relative mx-auto mt-12 max-w-5xl lg:mt-0">
-      <div className="absolute -inset-6 rounded-[2rem] bg-[radial-gradient(circle_at_20%_15%,rgba(37,99,235,0.16),transparent_30%),radial-gradient(circle_at_80%_0%,rgba(201,164,92,0.20),transparent_28%)]" />
-      <div className="relative grid gap-4 rounded-[2rem] border border-white bg-white/82 p-4 shadow-premium backdrop-blur md:grid-cols-[1.02fr_0.98fr]">
+      <div className="absolute -inset-8 rounded-[2rem] bg-[radial-gradient(circle_at_20%_15%,rgba(37,99,235,0.18),transparent_30%),radial-gradient(circle_at_80%_0%,rgba(201,164,92,0.22),transparent_28%)]" />
+      <div className="relative grid gap-4 rounded-[2rem] border border-white bg-white/88 p-4 shadow-premium backdrop-blur md:grid-cols-[1.02fr_0.98fr]">
         <div className="overflow-hidden rounded-[1.5rem] bg-ink text-white">
           <img src={teachers[0].image} alt="" className="h-52 w-full object-cover opacity-95" />
           <div className="p-6">
@@ -291,6 +335,7 @@ function HeroVisual() {
               <Sparkles className="text-gold" size={20} />
             </div>
             <h3 className="mt-5 text-3xl font-semibold">Kholle maths avec Camille</h3>
+            <p className="mt-3 text-sm leading-6 text-white/65">Documents importes, objectifs renseignes, creneau confirme et paiement reserve en avance.</p>
             <div className="mt-5 flex flex-wrap gap-2">
               {["X-ENS Ulm", "Duo possible", "4.9/5"].map((item) => (
                 <span key={item} className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/85">{item}</span>
@@ -318,8 +363,17 @@ function HeroVisual() {
               </div>
             </div>
           </div>
+          <div className="rounded-3xl border border-slate-100 bg-ink p-5 text-white shadow-soft">
+            <div className="flex items-center gap-3">
+              <Trophy className="text-gold" size={22} />
+              <div>
+                <p className="text-sm font-semibold">Profils audites</p>
+                <p className="mt-1 text-xs leading-5 text-white/60">Certificat de scolarite, parcours et methodologie verifies avant publication.</p>
+              </div>
+            </div>
+          </div>
           <div className="grid grid-cols-2 gap-3">
-            {schools.slice(0, 4).map((school) => (
+            {schools.slice(0, 2).map((school) => (
               <div key={school.name} className="rounded-3xl border border-slate-100 bg-white p-4 shadow-soft">
                 <SchoolMark school={school} compact />
                 <p className="mt-3 text-sm font-semibold text-ink">{school.name}</p>
@@ -366,6 +420,23 @@ function BookingModal({ teacher, onClose }) {
               </button>
             </div>
             <img src={teacher.image} alt="" className="mt-6 h-72 w-full rounded-3xl object-cover" />
+            <div className="mt-5 rounded-3xl bg-white p-5">
+              <p className="text-sm font-semibold text-ink">Profil detaille</p>
+              <p className="mt-3 text-sm leading-6 text-slate-600">{teacher.bio}</p>
+              <div className="mt-5 grid gap-3">
+                {[
+                  ["Parcours", teacher.track],
+                  ["Niveaux", teacher.level],
+                  ["Methode", teacher.style],
+                  ["Resultats", teacher.results]
+                ].map(([label, value]) => (
+                  <div key={label} className="rounded-2xl bg-cloud p-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">{label}</p>
+                    <p className="mt-1 text-sm font-semibold text-ink">{value}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
             <div className="mt-5 grid gap-3 sm:grid-cols-3">
               {["Profil verifie", "Lien Zoom envoye", "Paiement securise"].map((item) => (
                 <div key={item} className="rounded-2xl bg-white p-4 text-sm font-semibold text-ink">
@@ -460,7 +531,7 @@ function App() {
     <div className="min-h-screen bg-white text-ink">
       <Header />
       <main>
-        <section id="hero" className="overflow-hidden px-5 pb-20 pt-32 lg:px-8 lg:pb-28 lg:pt-40">
+        <section id="hero" className="hero-surface overflow-hidden px-5 pb-20 pt-32 lg:px-8 lg:pb-28 lg:pt-40">
           <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[0.9fr_1.1fr]">
             <div>
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 shadow-sm">
@@ -478,9 +549,11 @@ function App() {
                 <Button href="#professeurs">Trouver un professeur</Button>
                 <Button href="#kholles" variant="secondary">Voir les kholles duo</Button>
               </div>
-              <div className="mt-10 grid grid-cols-3 gap-5 border-t border-slate-200 pt-7">
-                {["Professeurs verifies", "Paiement en avance", "Zoom ou presentiel"].map((item) => (
-                  <p key={item} className="text-sm font-semibold text-slate-600">{item}</p>
+              <div className="mt-10 grid gap-3 border-t border-slate-200 pt-7 sm:grid-cols-3">
+                {["Professeurs verifies", "Paiement en avance", "Documents prepares"].map((item) => (
+                  <div key={item} className="rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-sm">
+                    <p className="text-sm font-semibold text-slate-700">{item}</p>
+                  </div>
                 ))}
               </div>
             </div>
@@ -505,16 +578,27 @@ function App() {
 
         <section id="ecoles" className="px-5 py-20 lg:px-8">
           <div className="mx-auto max-w-7xl">
-            <SectionTitle eyebrow="Ecoles" title="Des profils issus d'institutions d'elite" text="Des cartes textuelles premium remplacent les logos officiels pour eviter l'usage d'actifs proteges." />
-            <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <SectionTitle eyebrow="Ecoles" title="Des profils issus d'institutions d'elite" text="Les professeurs doivent attester leur appartenance a une ecole eligible avant de publier leur profil." />
+            <div className="mt-12 grid gap-5 lg:grid-cols-3">
               {schools.map((school) => (
-                <article key={school.name} className="group rounded-3xl border border-slate-200 bg-white p-6 transition duration-300 hover:-translate-y-1 hover:shadow-soft">
+                <article key={school.name} className="group rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-premium">
                   <div className="grid gap-4">
                     <SchoolMark school={school} />
-                    <span className="shrink-0 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">Top ecole</span>
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">Top ecole</span>
+                      <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">Certificat requis</span>
+                    </div>
                   </div>
                   <p className="mt-6 text-sm font-medium text-slate-500">{school.category}</p>
                   <h3 className="mt-2 text-2xl font-semibold text-ink">{school.name}</h3>
+                  <p className="mt-4 text-sm leading-6 text-slate-600">{school.description}</p>
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    {school.strengths.map((strength) => (
+                      <span key={strength} className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                        {strength}
+                      </span>
+                    ))}
+                  </div>
                   <ChevronRight className="mt-8 text-slate-300 transition group-hover:translate-x-1 group-hover:text-electric" />
                 </article>
               ))}
@@ -592,8 +676,23 @@ function App() {
                       <p className="rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold text-ink">{teacher.price} EUR/h</p>
                     </div>
                     <p className="mt-4 text-sm leading-6 text-slate-600">{teacher.description}</p>
-                    <div className="mt-5 rounded-2xl bg-cloud p-4">
-                      <p className="text-sm font-medium text-slate-500">{teacher.subjects}</p>
+                    <div className="mt-5 grid gap-3">
+                      <div className="rounded-2xl bg-cloud p-4">
+                        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">Matieres</p>
+                        <p className="mt-1 text-sm font-semibold text-slate-700">{teacher.subjects}</p>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="rounded-2xl border border-slate-200 p-4">
+                          <Brain className="text-electric" size={18} />
+                          <p className="mt-2 text-xs font-semibold text-slate-500">Methode</p>
+                          <p className="mt-1 text-sm font-semibold text-ink">{teacher.style}</p>
+                        </div>
+                        <div className="rounded-2xl border border-slate-200 p-4">
+                          <Trophy className="text-gold" size={18} />
+                          <p className="mt-2 text-xs font-semibold text-slate-500">Experience</p>
+                          <p className="mt-1 text-sm font-semibold text-ink">{teacher.reviews} avis</p>
+                        </div>
+                      </div>
                     </div>
                     <span className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-4 py-3 text-sm font-semibold text-white transition group-hover:bg-black">
                       Voir les creneaux <ArrowRight size={16} />
