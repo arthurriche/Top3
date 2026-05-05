@@ -5,7 +5,6 @@ import {
   Award,
   BookOpen,
   Brain,
-  Building2,
   CalendarCheck,
   CheckCircle2,
   ChevronRight,
@@ -14,7 +13,6 @@ import {
   CreditCard,
   DoorOpen,
   FileUp,
-  GraduationCap,
   LineChart,
   Lock,
   MapPin,
@@ -96,6 +94,17 @@ const subjects = [
   "Preparation aux concours",
   "Methodologie",
   "Entretiens"
+];
+
+const levels = [
+  "Seconde",
+  "Premiere",
+  "Terminale",
+  "Prepa scientifique",
+  "Prepa commerce",
+  "Licence",
+  "Master",
+  "Concours / oraux"
 ];
 
 const teachers = [
@@ -242,8 +251,6 @@ const testimonials = [
     role: "Etudiant en licence"
   }
 ];
-
-const stats = ["6 ecoles d'excellence", "Professeurs verifies", "Kholles duo sur Zoom", "Paiement avant reservation"];
 
 function Button({ children, variant = "primary", href = "#professeurs" }) {
   const variants = {
@@ -605,6 +612,9 @@ function BookingModal({ teacher, onClose }) {
 function App() {
   const [selectedTeacher, setSelectedTeacher] = React.useState(null);
   const [teacherSignupStatus, setTeacherSignupStatus] = React.useState(null);
+  const [hasAutoEntrepreneurStatus, setHasAutoEntrepreneurStatus] = React.useState("no");
+  const [searchSubject, setSearchSubject] = React.useState(subjects[0]);
+  const [searchLevel, setSearchLevel] = React.useState(levels[0]);
 
   async function handleTeacherSignupSubmit(event) {
     event.preventDefault();
@@ -632,6 +642,9 @@ function App() {
         profile: formData.get("profile"),
         hourly_rate: formData.get("hourly_rate"),
         availability: formData.get("availability"),
+        has_auto_entrepreneur_status: formData.get("has_auto_entrepreneur_status") === "yes",
+        auto_entrepreneur_identifier: formData.get("auto_entrepreneur_identifier"),
+        needs_auto_entrepreneur_setup: formData.get("has_auto_entrepreneur_status") !== "yes",
         certificates: certificateFiles,
         status: "pending_review"
       });
@@ -655,10 +668,6 @@ function App() {
         <section id="hero" className="hero-surface overflow-hidden px-5 pb-20 pt-32 lg:px-8 lg:pb-28 lg:pt-40">
           <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[0.9fr_1.1fr]">
             <div>
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 shadow-sm">
-                <GraduationCap size={16} className="text-electric" />
-                Cours et kholles par le top academique francais
-              </div>
               <h1 className="max-w-4xl text-5xl font-semibold tracking-tight text-ink md:text-7xl">
                 Les meilleurs eleves des meilleures ecoles pour vous faire progresser
               </h1>
@@ -670,12 +679,40 @@ function App() {
                 <Button href="#professeurs">Trouver un professeur</Button>
                 <Button href="#kholles" variant="secondary">Voir les kholles duo</Button>
               </div>
-              <div className="mt-10 grid gap-3 border-t border-slate-200 pt-7 sm:grid-cols-3">
-                {["Professeurs verifies", "Paiement en avance", "Documents prepares"].map((item) => (
-                  <div key={item} className="rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-sm">
-                    <p className="text-sm font-semibold text-slate-700">{item}</p>
-                  </div>
-                ))}
+              <div className="mt-10 rounded-[1.75rem] border border-slate-200 bg-white/90 p-4 shadow-soft backdrop-blur">
+                <p className="text-sm font-semibold text-ink">Trouver le bon professeur</p>
+                <div className="mt-4 grid gap-3 md:grid-cols-[1fr_1fr_auto]">
+                  <label className="grid gap-2">
+                    <span className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">Matiere</span>
+                    <select
+                      value={searchSubject}
+                      onChange={(event) => setSearchSubject(event.target.value)}
+                      className="h-12 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-semibold text-ink outline-none transition focus:border-electric"
+                    >
+                      {subjects.map((subject) => (
+                        <option key={subject}>{subject}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="grid gap-2">
+                    <span className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">Niveau</span>
+                    <select
+                      value={searchLevel}
+                      onChange={(event) => setSearchLevel(event.target.value)}
+                      className="h-12 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-semibold text-ink outline-none transition focus:border-electric"
+                    >
+                      {levels.map((level) => (
+                        <option key={level}>{level}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <a href="#professeurs" className="inline-flex h-12 items-center justify-center self-end rounded-2xl bg-ink px-5 text-sm font-semibold text-white transition hover:bg-black">
+                    Rechercher
+                  </a>
+                </div>
+                <p className="mt-3 text-sm text-slate-500">
+                  Recherche : <span className="font-semibold text-ink">{searchSubject}</span> pour <span className="font-semibold text-ink">{searchLevel}</span>
+                </p>
               </div>
             </div>
             <HeroVisual />
@@ -841,25 +878,26 @@ function App() {
 
         <section id="avis" className="bg-cloud px-5 py-20 lg:px-8">
           <div className="mx-auto max-w-7xl">
-            <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+            <div className="grid gap-12 lg:grid-cols-[0.75fr_1.25fr] lg:items-start">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-electric">Avis fictifs</p>
-                <h2 className="mt-3 text-3xl font-semibold tracking-tight md:text-5xl">Une preuve sociale claire pour rassurer parents et etudiants</h2>
-                <div className="mt-8 grid gap-3 sm:grid-cols-2">
-                  {stats.map((stat) => (
-                    <div key={stat} className="rounded-2xl border border-slate-200 bg-white p-5">
-                      <Building2 className="mb-3 text-electric" size={19} />
-                      <p className="font-semibold">{stat}</p>
-                    </div>
-                  ))}
-                </div>
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-electric">Avis</p>
+                <h2 className="mt-3 text-3xl font-semibold tracking-tight md:text-5xl">Des retours concrets de parents et d'etudiants</h2>
+                <p className="mt-5 text-lg leading-8 text-slate-600">
+                  Les avis ci-dessous sont des exemples de contenu pour le prototype. Ils montrent le ton attendu : precis,
+                  sobre et centre sur les progres.
+                </p>
               </div>
-              <div className="grid gap-4">
+              <div className="grid gap-4 md:grid-cols-3">
                 {testimonials.map((testimonial) => (
                   <article key={testimonial.author} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
                     <BookOpen className="text-gold" />
                     <p className="mt-4 text-lg leading-8 text-slate-700">"{testimonial.quote}"</p>
-                    <p className="mt-5 font-semibold">{testimonial.author}</p>
+                    <div className="mt-5 flex text-amber-500">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star key={star} size={15} fill="currentColor" />
+                      ))}
+                    </div>
+                    <p className="mt-4 font-semibold">{testimonial.author}</p>
                     <p className="text-sm text-slate-500">{testimonial.role}</p>
                   </article>
                 ))}
@@ -908,6 +946,37 @@ function App() {
               <div className="mt-4 grid gap-4 sm:grid-cols-2">
                 <input name="hourly_rate" className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric" placeholder="Tarif horaire souhaite" />
                 <input name="availability" className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric" placeholder="Disponibilites types" />
+              </div>
+              <div className="mt-4 rounded-3xl bg-cloud p-5">
+                <p className="text-sm font-semibold text-ink">Statut auto-entrepreneur</p>
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  Si vous avez deja un statut, renseignez-le. Sinon, Top3 vous accompagne pour l'ouverture avant les premiers cours.
+                </p>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  {[
+                    ["yes", "Oui, j'ai deja un statut"],
+                    ["no", "Non, Top3 m'accompagne"]
+                  ].map(([value, label]) => (
+                    <label key={value} className={`cursor-pointer rounded-2xl border p-4 text-sm font-semibold transition ${hasAutoEntrepreneurStatus === value ? "border-ink bg-ink text-white" : "border-slate-200 bg-white text-ink"}`}>
+                      <input
+                        type="radio"
+                        name="has_auto_entrepreneur_status"
+                        value={value}
+                        checked={hasAutoEntrepreneurStatus === value}
+                        onChange={() => setHasAutoEntrepreneurStatus(value)}
+                        className="sr-only"
+                      />
+                      {label}
+                    </label>
+                  ))}
+                </div>
+                {hasAutoEntrepreneurStatus === "yes" && (
+                  <input
+                    name="auto_entrepreneur_identifier"
+                    className="mt-3 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric"
+                    placeholder="Numero SIRET ou information administrative"
+                  />
+                )}
               </div>
               <label className="mt-4 flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-dashed border-slate-300 bg-cloud px-4 py-5 text-sm text-slate-600 transition hover:border-electric">
                 <span className="flex items-center gap-3">

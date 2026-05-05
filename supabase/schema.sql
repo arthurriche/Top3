@@ -26,9 +26,21 @@ create table if not exists public.teacher_applications (
   profile text,
   hourly_rate text,
   availability text,
+  has_auto_entrepreneur_status boolean not null default false,
+  auto_entrepreneur_identifier text,
+  needs_auto_entrepreneur_setup boolean not null default true,
   certificates jsonb not null default '[]'::jsonb,
   status text not null default 'pending_review'
 );
+
+alter table public.teacher_applications
+add column if not exists has_auto_entrepreneur_status boolean not null default false;
+
+alter table public.teacher_applications
+add column if not exists auto_entrepreneur_identifier text;
+
+alter table public.teacher_applications
+add column if not exists needs_auto_entrepreneur_setup boolean not null default true;
 
 alter table public.course_reservations enable row level security;
 alter table public.teacher_applications enable row level security;
