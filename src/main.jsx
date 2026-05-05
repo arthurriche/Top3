@@ -8,9 +8,11 @@ import {
   CalendarCheck,
   CheckCircle2,
   ChevronRight,
+  ClipboardCheck,
   Clock,
   CreditCard,
   DoorOpen,
+  FileUp,
   GraduationCap,
   LineChart,
   Lock,
@@ -29,12 +31,45 @@ import {
 import "./styles.css";
 
 const schools = [
-  { name: "X-ENS Ulm", mark: "X-ENS", category: "Ingenieur & ENS", tone: "from-slate-950 to-blue-900" },
-  { name: "Mines Paris", mark: "MINES", category: "Ingenieur", tone: "from-blue-950 to-slate-800" },
-  { name: "CentraleSupelec", mark: "CS", category: "Ingenieur", tone: "from-slate-900 to-indigo-900" },
-  { name: "HEC Paris", mark: "HEC", category: "Commerce", tone: "from-blue-900 to-slate-950" },
-  { name: "ESSEC", mark: "ESSEC", category: "Commerce", tone: "from-slate-950 to-sky-900" },
-  { name: "ESCP", mark: "ESCP", category: "Commerce", tone: "from-indigo-950 to-slate-950" }
+  {
+    name: "X-ENS Ulm",
+    mark: "X-ENS",
+    category: "Ingenieur & ENS",
+    logos: [
+      "https://commons.wikimedia.org/wiki/Special:Redirect/file/%C3%89cole_polytechnique_signature.svg",
+      "https://commons.wikimedia.org/wiki/Special:Redirect/file/Logo_%C3%89cole_normale_sup%C3%A9rieure_-_PSL_(ENS-PSL).svg"
+    ]
+  },
+  {
+    name: "Mines Paris",
+    mark: "MINES",
+    category: "Ingenieur",
+    logos: ["https://commons.wikimedia.org/wiki/Special:Redirect/file/Logo_Mines_Paris_-_PSL.png"]
+  },
+  {
+    name: "CentraleSupelec",
+    mark: "CS",
+    category: "Ingenieur",
+    logos: ["https://commons.wikimedia.org/wiki/Special:Redirect/file/Ecole_Centrale_Supelec_logo.svg"]
+  },
+  {
+    name: "HEC Paris",
+    mark: "HEC",
+    category: "Commerce",
+    logos: ["https://commons.wikimedia.org/wiki/Special:Redirect/file/HEC_Paris.svg"]
+  },
+  {
+    name: "ESSEC",
+    mark: "ESSEC",
+    category: "Commerce",
+    logos: ["https://commons.wikimedia.org/wiki/Special:Redirect/file/ESSEC_Logo.svg"]
+  },
+  {
+    name: "ESCP",
+    mark: "ESCP",
+    category: "Commerce",
+    logos: ["https://commons.wikimedia.org/wiki/Special:Redirect/file/ESCP_LOGO_CMJN.png"]
+  }
 ];
 
 const subjects = [
@@ -186,6 +221,7 @@ function Header() {
     ["Ecoles", "#ecoles"],
     ["Kholles", "#kholles"],
     ["Professeurs", "#professeurs"],
+    ["Devenir prof", "#devenir-prof"],
     ["Avis", "#avis"]
   ];
 
@@ -227,8 +263,17 @@ function Header() {
 
 function SchoolMark({ school, compact = false }) {
   return (
-    <div className={`grid place-items-center rounded-2xl bg-gradient-to-br ${school.tone} text-white shadow-soft ${compact ? "h-12 w-16 text-[11px]" : "h-16 w-24 text-sm"}`}>
-      <span className="font-extrabold tracking-wide">{school.mark}</span>
+    <div className={`flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white shadow-sm ${compact ? "h-14 w-full px-3" : "h-20 w-full px-4"}`}>
+      {school.logos?.map((logo) => (
+        <img
+          key={logo}
+          src={logo}
+          alt={`Logo ${school.name}`}
+          className={`${compact ? "max-h-8 max-w-[4.8rem]" : "max-h-12 max-w-[8rem]"} object-contain`}
+          loading="lazy"
+        />
+      ))}
+      {!school.logos?.length && <span className="font-extrabold tracking-wide text-ink">{school.mark}</span>}
     </div>
   );
 }
@@ -354,6 +399,32 @@ function BookingModal({ teacher, onClose }) {
             </div>
 
             <div className="mt-6 rounded-3xl border border-slate-200 p-5">
+              <div className="mb-6 rounded-3xl bg-cloud p-5">
+                <p className="text-sm font-semibold text-ink">Informations pour preparer le cours</p>
+                <div className="mt-4 grid gap-3">
+                  <textarea
+                    className="min-h-28 rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric"
+                    placeholder="Sujets a travailler : chapitre, exercice, concours, type de difficulte..."
+                  />
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <input
+                      className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric"
+                      placeholder="Niveau dans la classe"
+                    />
+                    <input
+                      className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric"
+                      placeholder="Etablissement d'origine"
+                    />
+                  </div>
+                  <label className="flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-dashed border-slate-300 bg-white px-4 py-4 text-sm text-slate-600 transition hover:border-electric">
+                    <span className="flex items-center gap-3">
+                      <FileUp className="text-electric" size={18} />
+                      Ajouter documents du cours, DM, annales ou copies
+                    </span>
+                    <input type="file" multiple className="hidden" />
+                  </label>
+                </div>
+              </div>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-slate-500">Total a payer maintenant</p>
@@ -438,7 +509,7 @@ function App() {
             <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {schools.map((school) => (
                 <article key={school.name} className="group rounded-3xl border border-slate-200 bg-white p-6 transition duration-300 hover:-translate-y-1 hover:shadow-soft">
-                  <div className="flex items-start justify-between gap-4">
+                  <div className="grid gap-4">
                     <SchoolMark school={school} />
                     <span className="shrink-0 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">Top ecole</span>
                   </div>
@@ -577,6 +648,63 @@ function App() {
           </div>
         </section>
 
+        <section id="devenir-prof" className="px-5 py-20 lg:px-8">
+          <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-electric">Devenir professeur</p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-tight md:text-5xl">
+                Creez votre profil et attestez votre ecole
+              </h2>
+              <p className="mt-5 text-lg leading-8 text-slate-600">
+                Les professeurs doivent renseigner leur parcours, leurs matieres, leurs tarifs et deposer un certificat de scolarite
+                pour verifier leur appartenance a une ecole eligible.
+              </p>
+              <div className="mt-8 grid gap-3 sm:grid-cols-2">
+                {["Certificat de scolarite requis", "Profil verifie avant publication", "Tarifs et disponibilites libres", "Cours solo ou kholles duo"].map((item) => (
+                  <div key={item} className="rounded-2xl border border-slate-200 bg-white p-5">
+                    <ClipboardCheck className="mb-3 text-electric" size={20} />
+                    <p className="font-semibold">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <form className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-premium sm:p-7">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <input className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric" placeholder="Prenom" />
+                <input className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric" placeholder="Nom" />
+                <input className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric" placeholder="Email etudiant" />
+                <select className="rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-500 outline-none transition focus:border-electric">
+                  <option>Ecole a verifier</option>
+                  {schools.map((school) => (
+                    <option key={school.name}>{school.name}</option>
+                  ))}
+                </select>
+              </div>
+              <textarea
+                className="mt-4 min-h-28 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric"
+                placeholder="Matieres enseignees, niveau cible, experience de kholles, methode pedagogique..."
+              />
+              <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                <input className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric" placeholder="Tarif horaire souhaite" />
+                <input className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric" placeholder="Disponibilites types" />
+              </div>
+              <label className="mt-4 flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-dashed border-slate-300 bg-cloud px-4 py-5 text-sm text-slate-600 transition hover:border-electric">
+                <span className="flex items-center gap-3">
+                  <FileUp className="text-electric" size={18} />
+                  Importer certificat de scolarite
+                </span>
+                <input type="file" accept=".pdf,.jpg,.jpeg,.png" className="hidden" />
+              </label>
+              <button type="button" className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-5 py-4 text-sm font-semibold text-white transition hover:bg-black">
+                Creer mon profil professeur <ArrowRight size={16} />
+              </button>
+              <p className="mt-3 text-center text-xs text-slate-400">
+                Prototype sans backend : les fichiers ne sont pas encore envoyes a un serveur.
+              </p>
+            </form>
+          </div>
+        </section>
+
         <section id="cta" className="px-5 py-20 lg:px-8">
           <div className="mx-auto max-w-7xl rounded-[2rem] bg-ink px-6 py-16 text-center text-white shadow-premium md:px-12">
             <UserCheck className="mx-auto text-gold" size={34} />
@@ -596,6 +724,9 @@ function App() {
               Top3
             </div>
             <p className="mt-3 text-sm text-slate-500">Top3 — Cours particuliers par les eleves des meilleures ecoles francaises.</p>
+            <p className="mt-2 max-w-2xl text-xs leading-5 text-slate-400">
+              Les logos et marques des ecoles sont utilises a titre d'identification. Top3 n'est pas affilie aux etablissements cites.
+            </p>
           </div>
           <div className="flex flex-wrap gap-5 text-sm font-medium text-slate-600">
             {["A propos", "Professeurs", "Matieres", "Tarifs", "Contact"].map((link) => (
