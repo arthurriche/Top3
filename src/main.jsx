@@ -30,6 +30,7 @@ import {
   X,
   Zap
 } from "lucide-react";
+import { isSupabaseConfigured, supabase } from "./lib/supabase";
 import "./styles.css";
 
 const schools = [
@@ -396,13 +397,82 @@ function SectionTitle({ eyebrow, title, text, dark = false }) {
   );
 }
 
+async function uploadFiles(bucket, folder, files) {
+  if (!files?.length) return [];
+
+  const uploads = [];
+
+  for (const file of files) {
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
+    const path = `${folder}/${Date.now()}-${safeName}`;
+    const { data, error } = await supabase.storage.from(bucket).upload(path, file);
+
+    if (error) {
+      throw error;
+    }
+
+    uploads.push({
+      name: file.name,
+      path: data.path,
+      size: file.size,
+      type: file.type
+    });
+  }
+
+  return uploads;
+}
+
 function BookingModal({ teacher, onClose }) {
   const [selectedSlot, setSelectedSlot] = React.useState(teacher?.slots?.[0] ?? "");
   const [format, setFormat] = React.useState("Solo");
+  const [submitStatus, setSubmitStatus] = React.useState(null);
 
   if (!teacher) return null;
 
   const price = format === "Kholle duo" ? teacher.price + 20 : teacher.price;
+
+  async function handleReservationSubmit(event) {
+    event.preventDefault();
+    setSubmitStatus({ type: "loading", message: "Reservation en cours..." });
+
+    if (!isSupabaseConfigured) {
+      setSubmitStatus({ type: "error", message: "Supabase n'est pas configure dans l'environnement." });
+      return;
+    }
+
+    const formData = new FormData(event.currentTarget);
+
+    try {
+      const courseFiles = await uploadFiles(
+        "course-documents",
+        "reservations",
+        formData.getAll("course_documents").filter((file) => file?.size > 0)
+      );
+
+      const { error } = await supabase.from("course_reservations").insert({
+        teacher_name: teacher.firstName,
+        teacher_school: teacher.school,
+        subjects: teacher.subjects,
+        format,
+        slot: selectedSlot,
+        price_eur: price,
+        study_topics: formData.get("study_topics"),
+        class_level: formData.get("class_level"),
+        origin_school: formData.get("origin_school"),
+        documents: courseFiles,
+        payment_status: "prototype_pending"
+      });
+
+      if (error) throw error;
+
+      setSubmitStatus({ type: "success", message: "Reservation envoyee dans Supabase." });
+    } catch (error) {
+      setSubmitStatus({
+        type: "error",
+        message: `Impossible d'enregistrer : ${error.message}`
+      });
+    }
+  }
 
   return (
     <div className="fixed inset-0 z-[80] grid place-items-center bg-ink/55 px-4 py-6 backdrop-blur-sm" role="dialog" aria-modal="true">
@@ -446,7 +516,7 @@ function BookingModal({ teacher, onClose }) {
               ))}
             </div>
           </div>
-          <div className="p-5 sm:p-7">
+          <form onSubmit={handleReservationSubmit} className="p-5 sm:p-7">
             <p className="text-sm font-semibold text-slate-500">Format</p>
             <div className="mt-3 grid gap-3 sm:grid-cols-2">
               {["Solo", "Kholle duo"].map((item) => (
@@ -474,15 +544,18 @@ function BookingModal({ teacher, onClose }) {
                 <p className="text-sm font-semibold text-ink">Informations pour preparer le cours</p>
                 <div className="mt-4 grid gap-3">
                   <textarea
+                    name="study_topics"
                     className="min-h-28 rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric"
                     placeholder="Sujets a travailler : chapitre, exercice, concours, type de difficulte..."
                   />
                   <div className="grid gap-3 sm:grid-cols-2">
                     <input
+                      name="class_level"
                       className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric"
                       placeholder="Niveau dans la classe"
                     />
                     <input
+                      name="origin_school"
                       className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric"
                       placeholder="Etablissement d'origine"
                     />
@@ -492,7 +565,7 @@ function BookingModal({ teacher, onClose }) {
                       <FileUp className="text-electric" size={18} />
                       Ajouter documents du cours, DM, annales ou copies
                     </span>
-                    <input type="file" multiple className="hidden" />
+                    <input name="course_documents" type="file" multiple className="hidden" />
                   </label>
                 </div>
               </div>
@@ -504,20 +577,25 @@ function BookingModal({ teacher, onClose }) {
                 <CreditCard className="text-electric" />
               </div>
               <div className="mt-5 grid gap-3">
-                <input className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric" placeholder="Nom sur la carte" />
-                <input className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric" placeholder="Numero de carte" />
+                <input name="card_name" className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric" placeholder="Nom sur la carte" />
+                <input name="card_number" className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric" placeholder="Numero de carte" />
                 <div className="grid grid-cols-2 gap-3">
-                  <input className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric" placeholder="MM/AA" />
-                  <input className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric" placeholder="CVC" />
+                  <input name="card_expiry" className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric" placeholder="MM/AA" />
+                  <input name="card_cvc" className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric" placeholder="CVC" />
                 </div>
               </div>
-              <button className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-5 py-4 text-sm font-semibold text-white transition hover:bg-black">
+              <button type="submit" className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-5 py-4 text-sm font-semibold text-white transition hover:bg-black">
                 <Lock size={16} />
-                Payer et reserver
+                {submitStatus?.type === "loading" ? "Envoi..." : "Payer et reserver"}
               </button>
+              {submitStatus && (
+                <p className={`mt-3 text-center text-xs ${submitStatus.type === "error" ? "text-red-500" : submitStatus.type === "success" ? "text-emerald-600" : "text-slate-400"}`}>
+                  {submitStatus.message}
+                </p>
+              )}
               <p className="mt-3 text-center text-xs text-slate-400">Prototype sans backend : aucun paiement reel n'est effectue.</p>
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>
@@ -526,6 +604,49 @@ function BookingModal({ teacher, onClose }) {
 
 function App() {
   const [selectedTeacher, setSelectedTeacher] = React.useState(null);
+  const [teacherSignupStatus, setTeacherSignupStatus] = React.useState(null);
+
+  async function handleTeacherSignupSubmit(event) {
+    event.preventDefault();
+    setTeacherSignupStatus({ type: "loading", message: "Creation du profil en cours..." });
+
+    if (!isSupabaseConfigured) {
+      setTeacherSignupStatus({ type: "error", message: "Supabase n'est pas configure dans l'environnement." });
+      return;
+    }
+
+    const formData = new FormData(event.currentTarget);
+
+    try {
+      const certificateFiles = await uploadFiles(
+        "teacher-certificates",
+        "applications",
+        formData.getAll("certificate").filter((file) => file?.size > 0)
+      );
+
+      const { error } = await supabase.from("teacher_applications").insert({
+        first_name: formData.get("first_name"),
+        last_name: formData.get("last_name"),
+        email: formData.get("email"),
+        school: formData.get("school"),
+        profile: formData.get("profile"),
+        hourly_rate: formData.get("hourly_rate"),
+        availability: formData.get("availability"),
+        certificates: certificateFiles,
+        status: "pending_review"
+      });
+
+      if (error) throw error;
+
+      setTeacherSignupStatus({ type: "success", message: "Profil professeur envoye dans Supabase." });
+      event.currentTarget.reset();
+    } catch (error) {
+      setTeacherSignupStatus({
+        type: "error",
+        message: `Impossible d'enregistrer : ${error.message}`
+      });
+    }
+  }
 
   return (
     <div className="min-h-screen bg-white text-ink">
@@ -767,38 +888,44 @@ function App() {
                 ))}
               </div>
             </div>
-            <form className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-premium sm:p-7">
+            <form onSubmit={handleTeacherSignupSubmit} className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-premium sm:p-7">
               <div className="grid gap-4 sm:grid-cols-2">
-                <input className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric" placeholder="Prenom" />
-                <input className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric" placeholder="Nom" />
-                <input className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric" placeholder="Email etudiant" />
-                <select className="rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-500 outline-none transition focus:border-electric">
-                  <option>Ecole a verifier</option>
+                <input name="first_name" className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric" placeholder="Prenom" />
+                <input name="last_name" className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric" placeholder="Nom" />
+                <input name="email" type="email" className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric" placeholder="Email etudiant" />
+                <select name="school" className="rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-500 outline-none transition focus:border-electric">
+                  <option value="">Ecole a verifier</option>
                   {schools.map((school) => (
                     <option key={school.name}>{school.name}</option>
                   ))}
                 </select>
               </div>
               <textarea
+                name="profile"
                 className="mt-4 min-h-28 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric"
                 placeholder="Matieres enseignees, niveau cible, experience de kholles, methode pedagogique..."
               />
               <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                <input className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric" placeholder="Tarif horaire souhaite" />
-                <input className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric" placeholder="Disponibilites types" />
+                <input name="hourly_rate" className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric" placeholder="Tarif horaire souhaite" />
+                <input name="availability" className="rounded-2xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-electric" placeholder="Disponibilites types" />
               </div>
               <label className="mt-4 flex cursor-pointer items-center justify-between gap-4 rounded-2xl border border-dashed border-slate-300 bg-cloud px-4 py-5 text-sm text-slate-600 transition hover:border-electric">
                 <span className="flex items-center gap-3">
                   <FileUp className="text-electric" size={18} />
                   Importer certificat de scolarite
                 </span>
-                <input type="file" accept=".pdf,.jpg,.jpeg,.png" className="hidden" />
+                <input name="certificate" type="file" accept=".pdf,.jpg,.jpeg,.png" className="hidden" />
               </label>
-              <button type="button" className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-5 py-4 text-sm font-semibold text-white transition hover:bg-black">
-                Creer mon profil professeur <ArrowRight size={16} />
+              <button type="submit" className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-5 py-4 text-sm font-semibold text-white transition hover:bg-black">
+                {teacherSignupStatus?.type === "loading" ? "Envoi..." : "Creer mon profil professeur"} <ArrowRight size={16} />
               </button>
+              {teacherSignupStatus && (
+                <p className={`mt-3 text-center text-xs ${teacherSignupStatus.type === "error" ? "text-red-500" : teacherSignupStatus.type === "success" ? "text-emerald-600" : "text-slate-400"}`}>
+                  {teacherSignupStatus.message}
+                </p>
+              )}
               <p className="mt-3 text-center text-xs text-slate-400">
-                Prototype sans backend : les fichiers ne sont pas encore envoyes a un serveur.
+                Les fichiers sont envoyes dans Supabase Storage si le bucket est cree.
               </p>
             </form>
           </div>
