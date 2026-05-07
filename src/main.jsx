@@ -7,7 +7,6 @@ import {
   Brain,
   CalendarCheck,
   CheckCircle2,
-  ChevronRight,
   ClipboardCheck,
   Clock,
   CreditCard,
@@ -22,7 +21,6 @@ import {
   Star,
   Target,
   Trophy,
-  UserCheck,
   Users,
   Video,
   X,
@@ -739,14 +737,8 @@ function App() {
             <SectionTitle eyebrow="Ecoles" title="Des profils issus d'institutions d'elite" text="Les professeurs doivent attester leur appartenance a une ecole eligible avant de publier leur profil." />
             <div className="mt-12 grid gap-5 lg:grid-cols-3">
               {schools.map((school) => (
-                <article key={school.name} className="group rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-premium">
-                  <div className="grid gap-4">
-                    <SchoolMark school={school} />
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">Top ecole</span>
-                      <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">Certificat requis</span>
-                    </div>
-                  </div>
+                <article key={school.name} className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-sm">
+                  <SchoolMark school={school} />
                   <p className="mt-6 text-sm font-medium text-slate-500">{school.category}</p>
                   <h3 className="mt-2 text-2xl font-semibold text-ink">{school.name}</h3>
                   <p className="mt-4 text-sm leading-6 text-slate-600">{school.description}</p>
@@ -757,7 +749,6 @@ function App() {
                       </span>
                     ))}
                   </div>
-                  <ChevronRight className="mt-8 text-slate-300 transition group-hover:translate-x-1 group-hover:text-electric" />
                 </article>
               ))}
             </div>
@@ -792,20 +783,6 @@ function App() {
                   <Icon className="text-gold" />
                   <h3 className="mt-5 text-xl font-semibold">{title}</h3>
                   <p className="mt-3 text-sm leading-6 text-white/65">{text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section id="matieres" className="px-5 py-20 lg:px-8">
-          <div className="mx-auto max-w-7xl">
-            <SectionTitle eyebrow="Matieres" title="Des cours cibles pour les objectifs importants" text="Matieres academiques, concours, entretiens et methodologie de travail." />
-            <div className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              {subjects.map((subject) => (
-                <div key={subject} className="flex min-h-20 items-center gap-3 rounded-2xl border border-slate-200 bg-white px-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-soft">
-                  <CheckCircle2 className="shrink-0 text-gold" size={20} />
-                  <span className="font-medium">{subject}</span>
                 </div>
               ))}
             </div>
@@ -862,20 +839,6 @@ function App() {
           </div>
         </section>
 
-        <section className="px-5 py-20 lg:px-8">
-          <div className="mx-auto max-w-7xl">
-            <SectionTitle eyebrow="Fonctionnement" title="Reserve en quatre etapes" />
-            <div className="mt-12 grid gap-4 md:grid-cols-4">
-              {["Choisissez une matiere", "Selectionnez un professeur", "Payez votre creneau", "Progressez rapidement"].map((step, index) => (
-                <div key={step} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
-                  <span className="grid h-10 w-10 place-items-center rounded-full bg-ink text-sm font-semibold text-white">{index + 1}</span>
-                  <h3 className="mt-6 text-lg font-semibold">{step}</h3>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         <section id="avis" className="bg-cloud px-5 py-20 lg:px-8">
           <div className="mx-auto max-w-7xl">
             <div className="grid gap-12 lg:grid-cols-[0.75fr_1.25fr] lg:items-start">
@@ -883,8 +846,7 @@ function App() {
                 <p className="text-sm font-semibold uppercase tracking-[0.18em] text-electric">Avis</p>
                 <h2 className="mt-3 text-3xl font-semibold tracking-tight md:text-5xl">Des retours concrets de parents et d'etudiants</h2>
                 <p className="mt-5 text-lg leading-8 text-slate-600">
-                  Les avis ci-dessous sont des exemples de contenu pour le prototype. Ils montrent le ton attendu : precis,
-                  sobre et centre sur les progres.
+                  Des temoignages precis, sobres et centres sur les progres reels obtenus avec leur professeur Top3.
                 </p>
               </div>
               <div className="grid gap-4 md:grid-cols-3">
@@ -993,23 +955,10 @@ function App() {
                   {teacherSignupStatus.message}
                 </p>
               )}
-              <p className="mt-3 text-center text-xs text-slate-400">
-                Les fichiers sont envoyes dans Supabase Storage si le bucket est cree.
-              </p>
             </form>
           </div>
         </section>
 
-        <section id="cta" className="px-5 py-20 lg:px-8">
-          <div className="mx-auto max-w-7xl rounded-[2rem] bg-ink px-6 py-16 text-center text-white shadow-premium md:px-12">
-            <UserCheck className="mx-auto text-gold" size={34} />
-            <h2 className="mx-auto mt-5 max-w-3xl text-3xl font-semibold tracking-tight md:text-5xl">Pret a progresser avec les meilleurs ?</h2>
-            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-              <a href="#professeurs" className="inline-flex min-h-12 items-center justify-center rounded-full bg-white px-5 text-sm font-semibold text-ink transition hover:-translate-y-0.5">Reserver un cours</a>
-              <a href="mailto:professeurs@top3.fr" className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/20 px-5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-white/10">Rejoindre Top3 comme professeur</a>
-            </div>
-          </div>
-        </section>
       </main>
       <footer className="border-t border-slate-200 px-5 py-10 lg:px-8">
         <div className="mx-auto flex max-w-7xl flex-col gap-6 md:flex-row md:items-center md:justify-between">
@@ -1024,8 +973,14 @@ function App() {
             </p>
           </div>
           <div className="flex flex-wrap gap-5 text-sm font-medium text-slate-600">
-            {["A propos", "Professeurs", "Matieres", "Tarifs", "Contact"].map((link) => (
-              <a key={link} href="#hero" className="transition hover:text-ink">{link}</a>
+            {[
+              ["Pourquoi", "#pourquoi"],
+              ["Ecoles", "#ecoles"],
+              ["Kholles", "#kholles"],
+              ["Professeurs", "#professeurs"],
+              ["Devenir prof", "#devenir-prof"]
+            ].map(([label, href]) => (
+              <a key={href} href={href} className="transition hover:text-ink">{label}</a>
             ))}
           </div>
         </div>
